@@ -1,0 +1,35 @@
+import RPi.GPIO as GPIO
+from time import sleep
+from flask import abort, redirect, url_for
+
+app = Flask(__name__)
+
+GPIO.setmode(GPIO.BOARD)
+
+sound = 24
+led = 8
+
+GPIO.setup(sound, GPIO.IN)
+GPIO.setup(led, GPIO.OUT, initial=GPIO.LOW)
+
+@app.route('/')
+
+	try:	
+   		while 1:
+       		soundlvl = GPIO.input(sound)
+       		print "soundlvl", soundlvl
+
+       		if(soundlvl > 0):
+            	GPIO.output(led, GPIO.HIGH)
+           		sleep(5)
+
+       		if(soundlvl < 1):
+            	GPIO.output(led, GPIO.LOW)
+
+	except KeyboardInterrupt:
+    	pass
+
+GPIO.cleanup()
+
+if __name__ == "__main__":
+	app.run(debug=True, host='0.0.0.0', port=8889)
